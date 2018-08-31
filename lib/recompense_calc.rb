@@ -15,7 +15,8 @@ class RecompenseCalc
   end
 
   def total
-    calculate_costs(@projects)
+    processed_projects = apply_rules(@projects)
+    calculate_costs(processed_projects)
   end
 
   private
@@ -37,12 +38,15 @@ class RecompenseCalc
   end
 
   def calculate_costs(projects)
+    # Gather the cost info into an ordered data structure:
+    # cost_info = {45 => {full: 0, travel: 0}}
     cost_info = {}
     projects.each do |p|
-      cost_info[p[:rate]] = cost_info[p[:rate]] || {travel: 0, full: 0}
+      rate = p[:rate]
+      cost_info[rate] = cost_info[rate] || {travel: 0, full: 0}
 
-      cost_info[p[:rate]][:travel] += p[:travel_days]
-      cost_info[p[:rate]][:full] += p[:full_days]
+      cost_info[rate][:travel] += p[:travel_days]
+      cost_info[rate][:full] += p[:full_days]
     end
 
     total = 0
@@ -51,5 +55,20 @@ class RecompenseCalc
     end
 
     total
+  end
+
+  # Rules
+
+  def apply_rules(projects)
+    projects = rule_end_to_end(projects)
+  end
+
+  def rule_end_to_end(projects)
+    projects
+    # If the start of one project is the same as the end of another project....
+    # Compare the rates:
+    # - add one full day day to higher rated project
+    # - remove one travel day from each project
+    # Return modified project array
   end
 end
