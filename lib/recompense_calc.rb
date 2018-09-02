@@ -61,27 +61,37 @@ class RecompenseCalc
   # Rules
 
   def apply_rules(projects)
-    projects = rule_end_to_end(projects)
-  end
-
-  def rule_end_to_end(projects)
-    # If the start of one project is the same as the end of another project....
-    # Compare the rates:
-    # - add one full day day to higher rated project
-    # - remove one travel day from each project
-    # Return modified project array
-
-    # Get the start of each project:
     projects.map do |p1|
       # And compare it to the end of each project:
       projects.each do |p2|
         next if p2 == p1
-        if p1[:start_date] - 1 == p2[:end_date] || p1[:end_date] + 1 == p2[:start_date]
+
+        # Convert travel days to full days:
+        start_expanded = p1[:start_date] - 1
+        end_expanded = p1[:end_date] + 1
+
+        # Convert travel days:
+        if p2[:end_date].between?(start_expanded, end_expanded) or
+          p2[:start_date].between?(start_expanded, end_expanded)
+
           p1[:full_days] += 1
           p1[:travel_days] -= 1
         end
-      end
 
+        # Calculate overlap:
+        if p2[:start_date].between?(p1[:start_date], p1[:end_date]) or
+           p2[:end_date].between?(p1[:start_date], p1[:end_date])
+           # Add the one because there is at least one day of overlap.
+          overlap = (p1[:end_date] - p2[:start_date]) + 1
+          p1[:full_days] -= overlap
+
+          # Add the days back if this has the higher rate:
+          if p1[:rate] > p2[:rate]
+            p1[:full_days] += overlap
+          end
+        end
+
+      end
       p1
     end
   end
