@@ -16,6 +16,7 @@ class RecompenseCalc
 
   def total
     processed_projects = apply_rules(@projects)
+    # pp processed_projects.inspect
     calculate_costs(processed_projects)
   end
 
@@ -64,11 +65,25 @@ class RecompenseCalc
   end
 
   def rule_end_to_end(projects)
-    projects
     # If the start of one project is the same as the end of another project....
     # Compare the rates:
     # - add one full day day to higher rated project
     # - remove one travel day from each project
     # Return modified project array
+
+    # Get the start of each project:
+    projects.map do |p1|
+      # And compare it to the end of each project:
+      projects.each do |p2|
+        next if p2 == p1
+        if p1[:start_date] - 1 == p2[:end_date] || p1[:end_date] + 1 == p2[:start_date]
+          p1[:full_days] += 1
+          p1[:travel_days] -= 1
+        end
+      end
+
+      p1
+    end
   end
+
 end

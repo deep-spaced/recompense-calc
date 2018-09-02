@@ -31,6 +31,19 @@ class TestRecompenseCalc < Test::Unit::TestCase
     assert_equal(240, calc.total)
   end
 
+  def test_two_projects_end_to_end
+    calc = RecompenseCalc.new
+    calc.add_project(45, "2015-09-01", "2015-09-03")
+    calc.add_project(75, "2015-09-04", "2015-09-07")
+    # Travel at 45: 1
+    # Full days at 45: 2
+    # Travel days at 75: 1
+    # Full days at 75: 3
+    # Total: 375
+
+    assert_equal(375, calc.total)
+  end
+
   def test_three_projects
     calc = RecompenseCalc.new
     calc.add_project(45, "2015-09-01", "2015-09-01")
