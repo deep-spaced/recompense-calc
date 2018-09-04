@@ -2,6 +2,11 @@ require 'date'
 
 class RecompenseCalc
 
+  RATES = {
+    low: { travel: 45, full: 75 },
+    high: { travel: 55, full: 85 }
+  }
+
   def initialize
     @projects = []
   end
@@ -30,7 +35,7 @@ class RecompenseCalc
     travel_days = total_days >= 2 ? 2 : 0
 
     {
-      rate: rate.to_i,
+      rate: rate,
       start_date: parsed_start,
       end_date: parsed_end,
       travel_days: travel_days,
@@ -40,7 +45,7 @@ class RecompenseCalc
 
   def calculate_costs(projects)
     # Gather the cost info into an ordered data structure:
-    # cost_info = {45 => {full: 0, travel: 0}}
+    # cost_info = {low: {full: 0, travel: 0}}
     cost_info = {}
     projects.each do |p|
       rate = p[:rate]
@@ -52,10 +57,11 @@ class RecompenseCalc
 
     total = 0
     cost_info.each_pair do |rate, days|
-      total += (days[:full] * rate) + (days[:travel] * (rate.to_f/2))
+      total += (days[:full] * RATES[rate][:full])
+      total += (days[:travel] * RATES[rate][:travel])
     end
 
-    total
+    total.to_f
   end
 
   # Rules
