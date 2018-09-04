@@ -46,15 +46,13 @@ class TestRecompenseCalc < Test::Unit::TestCase
 
   def test_two_projects_overlap
     calc = RecompenseCalc.new
-    calc.add_project(45, "2015-09-01", "2015-09-05")
-    calc.add_project(75, "2015-09-03", "2015-09-09")
-    # Travel at 45: 1
-    # Full days at 45: 2
-    # Travel days at 75: 1
-    # Full days at 75: 5
-    # Total: 525
+    calc.add_project(45, "2015-09-01", "2015-09-04")
+    calc.add_project(45, "2015-09-03", "2015-09-08")
+    # Travel at 45: 2
+    # Full days at 45: 6
+    # Total: 315
 
-    assert_equal(555, calc.total)
+    assert_equal(315, calc.total)
   end
 
   def test_three_projects
@@ -87,14 +85,19 @@ class TestRecompenseCalc < Test::Unit::TestCase
 
   def test_three_projects_overlap
     calc = RecompenseCalc.new
-    calc.add_project(45, "2015-09-01", "2015-09-01")
-    calc.add_project(75, "2015-09-02", "2015-09-06")
-    calc.add_project(45, "2015-09-05", "2015-09-08")
-    # Travel at 45: 1
-    # Full days at 45: 2
+    calc.add_project(45, "2015-09-01", "2015-09-05")
+    calc.add_project(75, "2015-09-04", "2015-09-08")
+    calc.add_project(45, "2015-09-09", "2015-09-12")
+    # Travel at 45: 2
+    # Full days at 45:  5
+    # Travel days at 75: 0
     # Full days at 75: 5
-    # Total: 375+112.5 = 487.5
+    # Total: 645
 
-    # assert_equal(487.5, calc.total)
+    assert_equal(645, calc.total)
   end
+
+  # Requested scenarios
+
+
 end

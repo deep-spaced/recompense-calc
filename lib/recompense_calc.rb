@@ -61,10 +61,11 @@ class RecompenseCalc
   # Rules
 
   def apply_rules(projects)
+    # Loop through each project:
     projects.map do |p1|
-      # And compare it to the end of each project:
+      # And compare it to every other project.
       projects.each do |p2|
-        next if p2 == p1
+        next if p2 == p1 # Ignore if the same project.
 
         # Convert travel days to full days:
         start_expanded = p1[:start_date] - 1
@@ -79,8 +80,7 @@ class RecompenseCalc
         end
 
         # Calculate overlap:
-        if p2[:start_date].between?(p1[:start_date], p1[:end_date]) or
-           p2[:end_date].between?(p1[:start_date], p1[:end_date])
+        if p2[:start_date].between?(p1[:start_date], p1[:end_date]) # or
            # Add the one because there is at least one day of overlap.
           overlap = (p1[:end_date] - p2[:start_date]) + 1
           p1[:full_days] -= overlap
