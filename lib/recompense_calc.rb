@@ -92,7 +92,7 @@ class RecompenseCalc
           p1[:full_days] -= overlap
 
           # Add the days back if this has the higher rate:
-          if p1[:rate] > p2[:rate]
+          if RATES[p1[:rate]][:full] > RATES[p2[:rate]][:full]
             p1[:full_days] += overlap
           end
         end
