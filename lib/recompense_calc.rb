@@ -1,4 +1,6 @@
 require 'date'
+require 'securerandom'
+require 'pry'
 
 class RecompenseCalc
 
@@ -35,6 +37,7 @@ class RecompenseCalc
     travel_days = total_days >= 2 ? 2 : 0
 
     {
+      id: SecureRandom.uuid,
       rate: rate,
       start_date: parsed_start,
       end_date: parsed_end,
@@ -77,25 +80,33 @@ class RecompenseCalc
         start_expanded = p1[:start_date] - 1
         end_expanded = p1[:end_date] + 1
 
-        # Convert travel days:
+        # If the projects push up against each other:
         if p2[:end_date].between?(start_expanded, end_expanded) or
           p2[:start_date].between?(start_expanded, end_expanded)
 
           p1[:full_days] += 1
-          p1[:travel_days] -= 1
+          p1[:travel_days] -= (p1[:travel_days] == 0 ? 0 : 1)
         end
 
-        # Calculate overlap:
+        # Calculate any project overlap:
         if p2[:start_date].between?(p1[:start_date], p1[:end_date]) # or
            # Add the one because there is at least one day of overlap.
           overlap = (p1[:end_date] - p2[:start_date]) + 1
+          # binding.pry
           p1[:full_days] -= overlap
+          # binding.pry
 
           # Add the days back if this has the higher rate:
           if RATES[p1[:rate]][:full] > RATES[p2[:rate]][:full]
             p1[:full_days] += overlap
           end
         end
+
+        # If the two projects have the same project time and same rate,
+        # then they should each have the math for half the time:
+        # if (p1[:start_date]..p1[:end_date]) == (p2[:start_date]..p2[:end_date]) and p1[:rate] == p2[:rate]
+        #   p1[:full_days] = (p1[:full_days] / 2).to_f
+        # end
 
       end
       p1

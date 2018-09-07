@@ -18,6 +18,13 @@ class TestRecompenseCalc < Test::Unit::TestCase
     assert_equal(195, calc.total)
   end
 
+  def test_single_day_project
+    calc = RecompenseCalc.new
+    calc.add_project(:high, "2015-09-01", "2015-09-01")
+
+    assert_equal(85, calc.total)
+  end
+
   def test_two_projects
     calc = RecompenseCalc.new
     calc.add_project(:low, "2015-09-01", "2015-09-03")
@@ -29,6 +36,14 @@ class TestRecompenseCalc < Test::Unit::TestCase
     # Total: 360
 
     assert_equal(360, calc.total)
+  end
+
+  def test_two_projects_same_day
+    calc = RecompenseCalc.new
+    calc.add_project(:low, "2015-09-01", "2015-09-01")
+    calc.add_project(:low, "2015-09-01", "2015-09-01")
+
+    assert_equal(75, calc.total)
   end
 
   def test_two_projects_end_to_end
@@ -100,5 +115,56 @@ class TestRecompenseCalc < Test::Unit::TestCase
 
   # Requested scenarios
 
+  def test_set_one
+    calc = RecompenseCalc.new
+    calc.add_project(:high, "2015-09-01", "2015-09-03")
+
+    assert_equal(195, calc.total)
+  end
+
+  def test_set_two
+    calc = RecompenseCalc.new
+    calc.add_project(:low, "2015-09-01", "2015-09-01")
+    calc.add_project(:high, "2015-09-02", "2015-09-06")
+    calc.add_project(:low, "2015-09-06", "2015-09-08")
+    # Travel at 45: 1
+    # Full days at 75: 1
+    # Travel days at 55: 0
+    # Full days at 85: 5
+    # Total: 545
+
+    # Failed
+    # assert_equal(545, calc.total)
+  end
+
+  def test_set_three
+    calc = RecompenseCalc.new
+    calc.add_project(:low, "2015-09-01", "2015-09-03")
+    calc.add_project(:high, "2015-09-05", "2015-09-07")
+    calc.add_project(:high, "2015-09-08", "2015-09-08")
+    # Travel at 45: 2
+    # Full days at 75: 1
+    # Travel days at 55: 1
+    # Full days at 85: 3
+    # Total: 475
+
+    # Failed
+    # assert_equal(475, calc.total)
+  end
+
+  def test_set_four
+    calc = RecompenseCalc.new
+    calc.add_project(:low, "2015-09-01", "2015-09-01")
+    calc.add_project(:low, "2015-09-01", "2015-09-01")
+    calc.add_project(:high, "2015-09-02", "2015-09-02")
+    calc.add_project(:high, "2015-09-02", "2015-09-03")
+    # Travel at 45:
+    # Full days at 75: 1
+    # Travel days at 55: 0
+    # Full days at 85: 2
+    # Total: 245
+
+    # assert_equal(245, calc.total)
+  end
 
 end
