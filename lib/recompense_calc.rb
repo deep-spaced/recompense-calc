@@ -1,6 +1,6 @@
 require 'date'
 require 'securerandom'
-require 'pry'
+# require 'pry'
 
 class RecompenseCalc
 
