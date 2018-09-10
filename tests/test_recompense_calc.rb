@@ -8,7 +8,7 @@ class TestRecompenseCalc < Test::Unit::TestCase
     calc.add_project(:high, "2015-09-01", "2015-09-03")
     calc.add_project(:high, "2015-09-01", "2015-09-03")
 
-    # assert_equal(calc.projects.size, 2)
+    assert_equal(calc.projects.size, 2)
   end
 
   def test_single_project
